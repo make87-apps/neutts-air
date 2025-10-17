@@ -58,7 +58,8 @@ WORKDIR /app
 
 # Runtime deps required by phonemizer and NeuTTSAir
 RUN apt-get update && apt-get install --no-install-suggests --no-install-recommends -y \
-    espeak-ng \
+    espeak-ng espeak-data libespeak-ng1 \
+    && ln -sf /usr/bin/espeak-ng /usr/bin/espeak \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy built virtualenv and app
