@@ -58,6 +58,11 @@ ARG VIRTUAL_ENV=/make87/venv
 ENV TELEOP=1
 WORKDIR /app
 
+# Install runtime deps required by phonemizer and others
+RUN apt-get update && apt-get install --no-install-suggests --no-install-recommends -y \
+    espeak \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Copy built virtualenv and code
 COPY --from=base-image ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY --from=base-image /app /app
