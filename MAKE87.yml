@@ -69,10 +69,10 @@ container_config:
   environment:
     RUST_LOG: info
 build:
-  build_kit:
-    name: python3
+  custom:
+    dockerfile: Dockerfile
 dev_build:
-  build_kit:
-    name: python3
+  custom:
+    dockerfile: Dockerfile
     build_additions:
       ide: vscode_server_py3
