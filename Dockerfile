@@ -10,8 +10,7 @@ RUN apt-get update && apt-get install --no-install-suggests --no-install-recomme
     python3-venv \
     libpython3-dev \
     git \
-    espeak-ng espeak-data libespeak-ng1 \
-    && ln -sf /usr/bin/espeak-ng /usr/bin/espeak \
+    espeak \
     && python3 -m venv ${VIRTUAL_ENV} \
     && ${VIRTUAL_ENV}/bin/pip install --upgrade pip setuptools wheel \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
