@@ -64,23 +64,26 @@ class NeuTTSToFramePcm:
             yield audio.tobytes()
 
     def text_to_frame_pcm_s16le(self, text: str, pts_start: int = 0):
-        """Convert text to FramePcmS16le messages (streaming or single)."""
+        """Convert text to FramePcmS16le messages preserving chunk timing."""
         pts = pts_start
-        frame_duration = 0.1  # ~100ms logical PTS step for streaming
-        frame_samples = int(self.sample_rate * frame_duration)
+        for pcm_chunk in self.tts.infer_stream(text, self.ref_codes, self.ref_text):
+            # Convert normalized float [-1,1] to 16-bit PCM
+            audio = np.clip(pcm_chunk * 32767, -32768, 32767).astype(np.int16)
+            pcm_bytes = audio.tobytes()
 
-        for pcm_chunk in self.text_to_frames(text):
-            # Split chunk into smaller frames if needed
-            arr = np.frombuffer(pcm_chunk, dtype=np.int16)
-            for i in range(0, len(arr), frame_samples):
-                subchunk = arr[i : i + frame_samples].tobytes()
-                yield FramePcmS16le(
-                    data=subchunk,
-                    pts=pts,
-                    time_base=FramePcmS16le.Fraction(num=1, den=self.sample_rate),
-                    channels=1,
-                )
-                pts += frame_samples
+            # Estimate duration (in seconds) from sample count
+            duration_s = len(audio) / self.sample_rate
+
+            yield FramePcmS16le(
+                data=pcm_bytes,
+                pts=pts,
+                time_base=FramePcmS16le.Fraction(num=1, den=self.sample_rate),
+                channels=1,
+            )
+
+            pts += len(audio)
+            # Optional: pacing to real-time for consumers
+            time.sleep(duration_s)
 
 
 def main():
