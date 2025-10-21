@@ -55,10 +55,19 @@ class NeuTTSToFramePcm:
             audio = np.clip(chunk * 32767, -32768, 32767).astype(np.int16)
             yield audio.tobytes()
 
+    def infer_stream(
+        self, text: str, ref_codes: np.ndarray | torch.Tensor, ref_text: str
+    ) -> Generator[np.ndarray, None, None]:
+        try:
+            yield from self.tts.infer_stream(text, ref_codes, ref_text)
+        except Exception as e:
+            print(f"Error during inference: {e}")
+
     def text_to_frame_pcm_s16le(self, text: str, pts_start: int = 0):
         """Convert text to FramePcmS16le messages preserving chunk timing."""
         pts = pts_start
-        for pcm_chunk in self.tts.infer_stream(text, self.ref_codes, self.ref_text):
+
+        for pcm_chunk in self.infer_stream(text, self.ref_codes, self.ref_text):
             # Convert normalized float [-1,1] to 16-bit PCM
             audio = np.clip(pcm_chunk * 32767, -32768, 32767).astype(np.int16)
             pcm_bytes = audio.tobytes()
