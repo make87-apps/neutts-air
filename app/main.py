@@ -3,6 +3,7 @@ import time
 import torch
 import numpy as np
 import soundfile as sf
+from typing import Optional, Generator
 import os
 from make87_messages.audio.frame_pcm_s16le_pb2 import FramePcmS16le
 from make87.encodings import ProtobufEncoder
