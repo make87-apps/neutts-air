@@ -29,7 +29,6 @@ class NeuTTSToFramePcm:
     ):
         self.sample_rate = sample_rate
         self.backbone = backbone
-        self.is_streaming = "gguf" in backbone.lower()
 
         # Resolve reference text and codes
         if ref_text and os.path.exists(ref_text):
@@ -44,23 +43,16 @@ class NeuTTSToFramePcm:
 
         # Initialize NeuTTSAir model
         self.tts = NeuTTSAir(
-            backbone_repo="/models/backbone",
+            backbone_repo="neuphonic/neutts-air-q4-gguf",
             backbone_device="cpu",
-            codec_repo="/models/codec",
+            codec_repo="neuphonic/neucodec-onnx-decoder",
             codec_device="cpu",
         )
 
     def text_to_frames(self, text: str):
         """Generate audio chunks (as PCM S16LE bytes) from input text."""
-        if self.is_streaming:
-            # Streaming inference (GGUF)
-            for chunk in self.tts.infer_stream(text, self.ref_codes, self.ref_text):
-                audio = np.clip(chunk * 32767, -32768, 32767).astype(np.int16)
-                yield audio.tobytes()
-        else:
-            # ONNX full inference
-            wav = self.tts.infer(text, self.ref_codes, self.ref_text)
-            audio = np.clip(wav * 32767, -32768, 32767).astype(np.int16)
+        for chunk in self.tts.infer_stream(text, self.ref_codes, self.ref_text):
+            audio = np.clip(chunk * 32767, -32768, 32767).astype(np.int16)
             yield audio.tobytes()
 
     def text_to_frame_pcm_s16le(self, text: str, pts_start: int = 0):

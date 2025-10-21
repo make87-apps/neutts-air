@@ -53,8 +53,7 @@ RUN ${VIRTUAL_ENV}/bin/pip install .
 COPY reference_audio.mp3 /app/reference_audio.mp3
 COPY reference_text.txt  /app/reference_text.txt
 COPY ref_codes.pt        /app/ref_codes.pt
-ENV NEUTTS_BACKBONE=/models/backbone \
-    NEUTTS_REF_CODES=/app/ref_codes.pt \
+ENV NEUTTS_REF_CODES=/app/ref_codes.pt \
     NEUTTS_REF_TEXT=/app/reference_text.txt
 # Environment and entrypoint
 ENTRYPOINT ["/make87/venv/bin/python3", "-m", "app.main"]

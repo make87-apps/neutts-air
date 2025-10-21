@@ -12,9 +12,9 @@ logging.basicConfig(
 
 
 def main():
-    ref_audio = "/home/phillip/projects/neutts-air/reference_audio.mp3"
-    default_text = "/home/phillip/projects/neutts-air/reference_text.txt"
-    output_path = "/home/phillip/projects/neutts-air/ref_codes.pt"
+    ref_audio = "/home/phillip/projects/neutts-air/voices/arnold/reference_audio.mp3"
+    default_text = "/home/phillip/projects/neutts-air/voices/arnold/reference_text.txt"
+    output_path = "/home/phillip/projects/neutts-air/voices/arnold/ref_codes.pt"
 
     if not os.path.exists(ref_audio):
         raise FileNotFoundError(f"Reference audio not found: {ref_audio}")
