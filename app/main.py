@@ -83,8 +83,6 @@ class NeuTTSToFramePcm:
             )
 
             pts += len(audio)
-            # Optional: pacing to real-time for consumers
-            time.sleep(duration_s)
 
 
 def main():
