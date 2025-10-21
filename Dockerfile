@@ -35,7 +35,7 @@ RUN set -eux; \
 # ------------------------------------
 RUN ${VIRTUAL_ENV}/bin/pip install huggingface_hub
 
-COPY download.py /app/download.py
+COPY app/download.py /app/download.py
 RUN mkdir -p /models && ${VIRTUAL_ENV}/bin/python3 /app/download.py
 RUN ${VIRTUAL_ENV}/bin/pip uninstall -y huggingface_hub
 
