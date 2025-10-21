@@ -9,3 +9,5 @@ resemble-perth==1.0.1
 onnxruntime==1.23.1
 make87[zenoh,protobuf]>=0.1.0
 make87_messages>=0.2.8
+llama-cpp-python==0.3.5
+pyaudio==0.2.14

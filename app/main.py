@@ -44,9 +44,9 @@ class NeuTTSToFramePcm:
 
         # Initialize NeuTTSAir model
         self.tts = NeuTTSAir(
-            backbone_repo=backbone,
+            backbone_repo="/models/backbone",
             backbone_device="cpu",
-            codec_repo="neuphonic/neucodec-onnx-decoder",
+            codec_repo="/models/codec",
             codec_device="cpu",
         )
 
@@ -96,7 +96,7 @@ def main():
     # Configure TTS (change these paths/models to your actual ones)
     backbone = os.getenv("NEUTTS_BACKBONE", "neuphonic/neutts-air")
     ref_codes_path = os.getenv("NEUTTS_REF_CODES", "ref_codes.pt")
-    ref_text = os.getenv("NEUTTS_REF_TEXT", "/app/reference_audio.txt")
+    ref_text = os.getenv("NEUTTS_REF_TEXT", "/app/reference_text.txt")
 
     converter = NeuTTSToFramePcm(
         backbone=backbone, ref_codes_path=ref_codes_path, ref_text=ref_text

@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install --no-install-suggests --no-install-recomme
     libpython3-dev \
     git \
     espeak \
+    portaudio19-dev \
     && python3 -m venv ${VIRTUAL_ENV} \
     && ${VIRTUAL_ENV}/bin/pip install --upgrade pip setuptools wheel \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -30,6 +31,15 @@ RUN set -eux; \
     ${VIRTUAL_ENV}/bin/pip cache purge
 
 # ------------------------------------
+# Download model weights at build time
+# ------------------------------------
+RUN ${VIRTUAL_ENV}/bin/pip install huggingface_hub
+
+COPY download.py /app/download.py
+RUN mkdir -p /models && ${VIRTUAL_ENV}/bin/python3 /app/download.py
+RUN ${VIRTUAL_ENV}/bin/pip uninstall -y huggingface_hub
+
+# ------------------------------------
 # Copy application code and install local package
 # ------------------------------------
 COPY pyproject.toml ./
@@ -43,6 +53,8 @@ RUN ${VIRTUAL_ENV}/bin/pip install .
 COPY reference_audio.mp3 /app/reference_audio.mp3
 COPY reference_text.txt  /app/reference_text.txt
 COPY ref_codes.pt        /app/ref_codes.pt
-
+ENV NEUTTS_BACKBONE=/models/backbone \
+    NEUTTS_REF_CODES=/app/ref_codes.pt \
+    NEUTTS_REF_TEXT=/app/reference_text.txt
 # Environment and entrypoint
 ENTRYPOINT ["/make87/venv/bin/python3", "-m", "app.main"]
